@@ -34,11 +34,18 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: 'localhost',
-                port: 5432,
-                username: 'postgres',
-                password: 'dealeriq',
-                database: 'construction_erp',
+                ...(process.env.DATABASE_URL
+                    ? {
+                        url: process.env.DATABASE_URL,
+                        ssl: { rejectUnauthorized: false },
+                    }
+                    : {
+                        host: process.env.DB_HOST || 'localhost',
+                        port: Number(process.env.DB_PORT) || 5432,
+                        username: process.env.DB_USER || 'postgres',
+                        password: process.env.DB_PASSWORD || 'dealeriq',
+                        database: process.env.DB_NAME || 'construction_erp',
+                    }),
                 autoLoadEntities: true,
                 synchronize: true,
             }),
