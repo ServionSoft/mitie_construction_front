@@ -12,16 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Material = void 0;
 const typeorm_1 = require("typeorm");
 let Material = class Material {
-    id;
-    name;
-    unit;
-    category;
-    min_stock_level;
-    standard_unit_cost;
-    description;
-    is_active;
-    created_at;
-    updated_at;
 };
 exports.Material = Material;
 __decorate([

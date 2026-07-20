@@ -13,18 +13,6 @@ exports.Project = void 0;
 const typeorm_1 = require("typeorm");
 const project_stage_entity_1 = require("./project-stage.entity");
 let Project = class Project {
-    id;
-    name;
-    location;
-    plot_size;
-    start_date;
-    expected_completion_date;
-    project_type;
-    total_estimated_budget;
-    status;
-    created_at;
-    updated_at;
-    stages;
 };
 exports.Project = Project;
 __decorate([

@@ -12,17 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Supplier = void 0;
 const typeorm_1 = require("typeorm");
 let Supplier = class Supplier {
-    id;
-    name;
-    contact_name;
-    phone;
-    email;
-    category;
-    payment_terms;
-    address;
-    is_active;
-    created_at;
-    updated_at;
 };
 exports.Supplier = Supplier;
 __decorate([

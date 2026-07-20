@@ -12,17 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PurchaseOrder = void 0;
 const typeorm_1 = require("typeorm");
 let PurchaseOrder = class PurchaseOrder {
-    id;
-    project_id;
-    project_stage_id;
-    supplier_id;
-    order_date;
-    expected_delivery;
-    status;
-    total_amount;
-    notes;
-    created_at;
-    updated_at;
 };
 exports.PurchaseOrder = PurchaseOrder;
 __decorate([

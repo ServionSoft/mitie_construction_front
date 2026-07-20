@@ -12,14 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JournalEntry = void 0;
 const typeorm_1 = require("typeorm");
 let JournalEntry = class JournalEntry {
-    id;
-    entry_date;
-    reference_no;
-    description;
-    status;
-    project_id;
-    created_at;
-    updated_at;
 };
 exports.JournalEntry = JournalEntry;
 __decorate([

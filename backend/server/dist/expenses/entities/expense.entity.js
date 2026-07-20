@@ -12,20 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Expense = void 0;
 const typeorm_1 = require("typeorm");
 let Expense = class Expense {
-    id;
-    project_id;
-    project_stage_id;
-    category;
-    vendor_type;
-    supplier_id;
-    contractor_id;
-    payment_type;
-    expense_date;
-    amount;
-    description;
-    cash_transaction_id;
-    created_at;
-    updated_at;
 };
 exports.Expense = Expense;
 __decorate([

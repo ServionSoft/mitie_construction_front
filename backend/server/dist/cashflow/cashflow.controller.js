@@ -16,7 +16,6 @@ exports.CashflowController = void 0;
 const common_1 = require("@nestjs/common");
 const cashflow_service_1 = require("./cashflow.service");
 let CashflowController = class CashflowController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

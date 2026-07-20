@@ -16,7 +16,6 @@ exports.ProcurementController = void 0;
 const common_1 = require("@nestjs/common");
 const procurement_service_1 = require("./procurement.service");
 let ProcurementController = class ProcurementController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

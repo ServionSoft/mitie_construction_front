@@ -12,14 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Customer = void 0;
 const typeorm_1 = require("typeorm");
 let Customer = class Customer {
-    id;
-    name;
-    phone;
-    email;
-    cnic;
-    address;
-    created_at;
-    updated_at;
 };
 exports.Customer = Customer;
 __decorate([

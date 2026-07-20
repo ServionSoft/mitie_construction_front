@@ -13,16 +13,6 @@ exports.StageBudget = void 0;
 const typeorm_1 = require("typeorm");
 const project_stage_entity_1 = require("./project-stage.entity");
 let StageBudget = class StageBudget {
-    id;
-    project_stage_id;
-    labour_budget;
-    material_budget;
-    equipment_budget;
-    other_budget;
-    total_budget;
-    created_at;
-    updated_at;
-    stage;
 };
 exports.StageBudget = StageBudget;
 __decorate([

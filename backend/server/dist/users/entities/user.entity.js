@@ -13,16 +13,6 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const role_entity_1 = require("./role.entity");
 let User = class User {
-    id;
-    name;
-    email;
-    password_hash;
-    role_id;
-    is_active;
-    last_login_at;
-    created_at;
-    updated_at;
-    role;
 };
 exports.User = User;
 __decorate([

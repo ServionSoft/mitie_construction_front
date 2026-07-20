@@ -12,13 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Account = void 0;
 const typeorm_1 = require("typeorm");
 let Account = class Account {
-    id;
-    code;
-    name;
-    type;
-    is_active;
-    parent_account_id;
-    created_at;
 };
 exports.Account = Account;
 __decorate([

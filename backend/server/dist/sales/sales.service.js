@@ -21,10 +21,6 @@ const property_unit_entity_1 = require("./entities/property-unit.entity");
 const sale_entity_1 = require("./entities/sale.entity");
 const sale_installment_entity_1 = require("./entities/sale-installment.entity");
 let SalesService = class SalesService {
-    custRepo;
-    unitRepo;
-    saleRepo;
-    installRepo;
     constructor(custRepo, unitRepo, saleRepo, installRepo) {
         this.custRepo = custRepo;
         this.unitRepo = unitRepo;

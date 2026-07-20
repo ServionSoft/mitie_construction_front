@@ -14,14 +14,6 @@ const typeorm_1 = require("typeorm");
 const journal_entry_entity_1 = require("./journal-entry.entity");
 const account_entity_1 = require("./account.entity");
 let JournalEntryLine = class JournalEntryLine {
-    id;
-    journal_entry_id;
-    account_id;
-    dr_cr;
-    amount;
-    narration;
-    journal_entry;
-    account;
 };
 exports.JournalEntryLine = JournalEntryLine;
 __decorate([

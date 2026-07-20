@@ -20,9 +20,6 @@ const typeorm_3 = require("typeorm");
 const fund_source_entity_1 = require("./entities/fund-source.entity");
 const fund_transaction_entity_1 = require("./entities/fund-transaction.entity");
 let FundsService = class FundsService {
-    sourcesRepo;
-    txRepo;
-    dataSource;
     constructor(sourcesRepo, txRepo, dataSource) {
         this.sourcesRepo = sourcesRepo;
         this.txRepo = txRepo;

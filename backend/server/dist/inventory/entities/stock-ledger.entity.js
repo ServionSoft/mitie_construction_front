@@ -13,20 +13,6 @@ exports.StockLedger = void 0;
 const typeorm_1 = require("typeorm");
 const material_entity_1 = require("./material.entity");
 let StockLedger = class StockLedger {
-    id;
-    material_id;
-    movement_type;
-    quantity;
-    unit_cost;
-    total_cost;
-    project_id;
-    project_stage_id;
-    purchase_order_id;
-    movement_date;
-    reference_no;
-    notes;
-    created_at;
-    material;
 };
 exports.StockLedger = StockLedger;
 __decorate([

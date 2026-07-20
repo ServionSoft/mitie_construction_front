@@ -13,19 +13,6 @@ exports.LabourPayment = void 0;
 const typeorm_1 = require("typeorm");
 const labour_contractor_entity_1 = require("./labour-contractor.entity");
 let LabourPayment = class LabourPayment {
-    id;
-    contractor_id;
-    project_id;
-    project_stage_id;
-    payment_date;
-    amount;
-    payment_method;
-    reference_no;
-    notes;
-    cash_transaction_id;
-    created_at;
-    updated_at;
-    contractor;
 };
 exports.LabourPayment = LabourPayment;
 __decorate([

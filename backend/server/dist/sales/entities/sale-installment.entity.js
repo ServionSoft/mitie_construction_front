@@ -13,15 +13,6 @@ exports.SaleInstallment = void 0;
 const typeorm_1 = require("typeorm");
 const sale_entity_1 = require("./sale.entity");
 let SaleInstallment = class SaleInstallment {
-    id;
-    sale_id;
-    due_date;
-    due_amount;
-    paid_amount;
-    paid_date;
-    status;
-    notes;
-    sale;
 };
 exports.SaleInstallment = SaleInstallment;
 __decorate([

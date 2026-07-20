@@ -14,18 +14,6 @@ const typeorm_1 = require("typeorm");
 const customer_entity_1 = require("./customer.entity");
 const property_unit_entity_1 = require("./property-unit.entity");
 let Sale = class Sale {
-    id;
-    property_unit_id;
-    customer_id;
-    sale_date;
-    total_sale_price;
-    total_paid;
-    status;
-    notes;
-    created_at;
-    updated_at;
-    customer;
-    property_unit;
 };
 exports.Sale = Sale;
 __decorate([

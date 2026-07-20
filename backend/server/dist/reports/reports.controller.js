@@ -16,7 +16,6 @@ exports.ReportsController = void 0;
 const common_1 = require("@nestjs/common");
 const reports_service_1 = require("./reports.service");
 let ReportsController = class ReportsController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

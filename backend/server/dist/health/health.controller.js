@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 let HealthController = class HealthController {
-    dataSource;
     constructor(dataSource) {
         this.dataSource = dataSource;
     }

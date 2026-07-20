@@ -16,7 +16,6 @@ exports.InventoryController = void 0;
 const common_1 = require("@nestjs/common");
 const inventory_service_1 = require("./inventory.service");
 let InventoryController = class InventoryController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

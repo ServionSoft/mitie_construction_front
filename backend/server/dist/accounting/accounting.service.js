@@ -35,9 +35,6 @@ const SEED_ACCOUNTS = [
     { code: '5300', name: 'Overhead Expenses', type: 'EXPENSE' },
 ];
 let AccountingService = class AccountingService {
-    accountsRepo;
-    jeRepo;
-    jelRepo;
     constructor(accountsRepo, jeRepo, jelRepo) {
         this.accountsRepo = accountsRepo;
         this.jeRepo = jeRepo;

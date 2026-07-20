@@ -12,15 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LabourContractor = void 0;
 const typeorm_1 = require("typeorm");
 let LabourContractor = class LabourContractor {
-    id;
-    name;
-    contractor_type;
-    phone;
-    email;
-    daily_rate;
-    is_active;
-    created_at;
-    updated_at;
 };
 exports.LabourContractor = LabourContractor;
 __decorate([

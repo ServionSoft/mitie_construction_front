@@ -12,17 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PropertyUnit = void 0;
 const typeorm_1 = require("typeorm");
 let PropertyUnit = class PropertyUnit {
-    id;
-    project_id;
-    unit_number;
-    unit_type;
-    area_sqft;
-    floor;
-    list_price;
-    status;
-    notes;
-    created_at;
-    updated_at;
 };
 exports.PropertyUnit = PropertyUnit;
 __decorate([

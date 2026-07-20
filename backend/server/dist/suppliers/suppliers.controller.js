@@ -16,7 +16,6 @@ exports.SuppliersController = void 0;
 const common_1 = require("@nestjs/common");
 const suppliers_service_1 = require("./suppliers.service");
 let SuppliersController = class SuppliersController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

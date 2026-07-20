@@ -15,20 +15,6 @@ const project_entity_1 = require("./project.entity");
 const stage_budget_entity_1 = require("./stage-budget.entity");
 const stage_progress_entity_1 = require("./stage-progress.entity");
 let ProjectStage = class ProjectStage {
-    id;
-    project_id;
-    name;
-    description;
-    sequence_order;
-    start_date;
-    end_date;
-    completion_percent;
-    status;
-    created_at;
-    updated_at;
-    project;
-    budget;
-    progressLogs;
 };
 exports.ProjectStage = ProjectStage;
 __decorate([

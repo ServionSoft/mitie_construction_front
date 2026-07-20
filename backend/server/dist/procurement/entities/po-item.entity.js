@@ -13,15 +13,6 @@ exports.PoItem = void 0;
 const typeorm_1 = require("typeorm");
 const purchase_order_entity_1 = require("./purchase-order.entity");
 let PoItem = class PoItem {
-    id;
-    purchase_order_id;
-    material_name;
-    unit;
-    quantity;
-    unit_price;
-    total_price;
-    received_qty;
-    purchase_order;
 };
 exports.PoItem = PoItem;
 __decorate([

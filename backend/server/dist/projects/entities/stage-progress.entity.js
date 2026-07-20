@@ -13,14 +13,6 @@ exports.StageProgress = void 0;
 const typeorm_1 = require("typeorm");
 const project_stage_entity_1 = require("./project-stage.entity");
 let StageProgress = class StageProgress {
-    id;
-    project_stage_id;
-    report_date;
-    completion_percent;
-    notes;
-    has_delay;
-    created_at;
-    stage;
 };
 exports.StageProgress = StageProgress;
 __decorate([

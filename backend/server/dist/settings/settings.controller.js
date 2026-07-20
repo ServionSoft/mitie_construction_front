@@ -46,7 +46,6 @@ const FULL_RESET_EXTRA_TABLES = [
     'accounts',
 ];
 let SettingsController = class SettingsController {
-    dataSource;
     constructor(dataSource) {
         this.dataSource = dataSource;
     }

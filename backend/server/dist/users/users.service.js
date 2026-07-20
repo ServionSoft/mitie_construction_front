@@ -64,8 +64,6 @@ const DEFAULT_ROLES = [
     { name: 'Supervisor', description: 'Site supervisor' },
 ];
 let UsersService = class UsersService {
-    usersRepo;
-    rolesRepo;
     constructor(usersRepo, rolesRepo) {
         this.usersRepo = usersRepo;
         this.rolesRepo = rolesRepo;

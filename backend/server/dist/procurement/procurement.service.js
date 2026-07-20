@@ -20,9 +20,6 @@ const purchase_order_entity_1 = require("./entities/purchase-order.entity");
 const po_item_entity_1 = require("./entities/po-item.entity");
 const material_receipt_entity_1 = require("./entities/material-receipt.entity");
 let ProcurementService = class ProcurementService {
-    poRepo;
-    itemRepo;
-    receiptRepo;
     constructor(poRepo, itemRepo, receiptRepo) {
         this.poRepo = poRepo;
         this.itemRepo = itemRepo;

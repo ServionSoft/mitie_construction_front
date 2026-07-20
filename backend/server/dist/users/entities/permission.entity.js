@@ -13,13 +13,6 @@ exports.Permission = void 0;
 const typeorm_1 = require("typeorm");
 const role_permission_entity_1 = require("./role-permission.entity");
 let Permission = class Permission {
-    id;
-    code;
-    name;
-    description;
-    created_at;
-    updated_at;
-    rolePermissions;
 };
 exports.Permission = Permission;
 __decorate([

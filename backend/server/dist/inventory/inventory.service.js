@@ -83,10 +83,6 @@ const SEED_MATERIALS = [
     { name: 'Rubber Gloves', unit: 'nos', category: 'Safety', min_stock_level: '20', standard_unit_cost: '120', description: 'Heavy-duty rubber work gloves' },
 ];
 let InventoryService = class InventoryService {
-    materialRepo;
-    ledgerRepo;
-    issueRepo;
-    ds;
     constructor(materialRepo, ledgerRepo, issueRepo, ds) {
         this.materialRepo = materialRepo;
         this.ledgerRepo = ledgerRepo;

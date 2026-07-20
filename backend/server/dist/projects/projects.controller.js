@@ -18,7 +18,6 @@ const projects_service_1 = require("./projects.service");
 const create_project_dto_1 = require("./dto/create-project.dto");
 const create_stage_dto_1 = require("./dto/create-stage.dto");
 let ProjectsController = class ProjectsController {
-    projectsService;
     constructor(projectsService) {
         this.projectsService = projectsService;
     }

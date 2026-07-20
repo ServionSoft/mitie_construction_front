@@ -13,15 +13,6 @@ exports.FundTransaction = void 0;
 const typeorm_1 = require("typeorm");
 const fund_source_entity_1 = require("./fund-source.entity");
 let FundTransaction = class FundTransaction {
-    id;
-    fund_source_id;
-    transaction_date;
-    amount;
-    reference_no;
-    notes;
-    cash_transaction_id;
-    created_at;
-    fund_source;
 };
 exports.FundTransaction = FundTransaction;
 __decorate([

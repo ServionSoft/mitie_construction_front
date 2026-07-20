@@ -16,7 +16,6 @@ exports.LabourController = void 0;
 const common_1 = require("@nestjs/common");
 const labour_service_1 = require("./labour.service");
 let LabourController = class LabourController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

@@ -13,19 +13,6 @@ exports.MaterialIssue = void 0;
 const typeorm_1 = require("typeorm");
 const material_entity_1 = require("./material.entity");
 let MaterialIssue = class MaterialIssue {
-    id;
-    material_id;
-    project_id;
-    project_stage_id;
-    issue_date;
-    quantity;
-    unit_cost;
-    total_cost;
-    purpose;
-    reference_no;
-    notes;
-    created_at;
-    material;
 };
 exports.MaterialIssue = MaterialIssue;
 __decorate([

@@ -21,10 +21,6 @@ const labour_attendance_entity_1 = require("./entities/labour-attendance.entity"
 const labour_payment_entity_1 = require("./entities/labour-payment.entity");
 const labour_advance_entity_1 = require("./entities/labour-advance.entity");
 let LabourService = class LabourService {
-    contractorsRepo;
-    attendanceRepo;
-    paymentsRepo;
-    advancesRepo;
     constructor(contractorsRepo, attendanceRepo, paymentsRepo, advancesRepo) {
         this.contractorsRepo = contractorsRepo;
         this.attendanceRepo = attendanceRepo;

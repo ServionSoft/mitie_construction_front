@@ -13,16 +13,6 @@ exports.LabourAdvance = void 0;
 const typeorm_1 = require("typeorm");
 const labour_contractor_entity_1 = require("./labour-contractor.entity");
 let LabourAdvance = class LabourAdvance {
-    id;
-    contractor_id;
-    project_id;
-    advance_date;
-    amount;
-    recovered_amount;
-    reference_no;
-    notes;
-    created_at;
-    contractor;
 };
 exports.LabourAdvance = LabourAdvance;
 __decorate([

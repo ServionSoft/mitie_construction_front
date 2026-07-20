@@ -20,8 +20,6 @@ const cash_transaction_entity_1 = require("./entities/cash-transaction.entity");
 const typeorm_3 = require("@nestjs/typeorm");
 const typeorm_4 = require("typeorm");
 let CashflowService = class CashflowService {
-    repo;
-    ds;
     constructor(repo, ds) {
         this.repo = repo;
         this.ds = ds;

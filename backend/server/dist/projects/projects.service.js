@@ -20,10 +20,6 @@ const project_entity_1 = require("./entities/project.entity");
 const project_stage_entity_1 = require("./entities/project-stage.entity");
 const stage_budget_entity_1 = require("./entities/stage-budget.entity");
 let ProjectsService = class ProjectsService {
-    projectsRepo;
-    stagesRepo;
-    stageBudgetsRepo;
-    dataSource;
     constructor(projectsRepo, stagesRepo, stageBudgetsRepo, dataSource) {
         this.projectsRepo = projectsRepo;
         this.stagesRepo = stagesRepo;

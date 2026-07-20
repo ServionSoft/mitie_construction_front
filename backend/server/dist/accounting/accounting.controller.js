@@ -16,7 +16,6 @@ exports.AccountingController = void 0;
 const common_1 = require("@nestjs/common");
 const accounting_service_1 = require("./accounting.service");
 let AccountingController = class AccountingController {
-    svc;
     constructor(svc) {
         this.svc = svc;
     }

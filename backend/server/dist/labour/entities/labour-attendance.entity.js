@@ -13,16 +13,6 @@ exports.LabourAttendance = void 0;
 const typeorm_1 = require("typeorm");
 const labour_contractor_entity_1 = require("./labour-contractor.entity");
 let LabourAttendance = class LabourAttendance {
-    id;
-    contractor_id;
-    project_id;
-    project_stage_id;
-    attendance_date;
-    present_days;
-    notes;
-    created_at;
-    updated_at;
-    contractor;
 };
 exports.LabourAttendance = LabourAttendance;
 __decorate([

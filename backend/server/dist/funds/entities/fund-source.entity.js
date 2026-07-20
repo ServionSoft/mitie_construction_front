@@ -12,16 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FundSource = void 0;
 const typeorm_1 = require("typeorm");
 let FundSource = class FundSource {
-    id;
-    project_id;
-    source_name;
-    source_type;
-    total_committed;
-    received_so_far;
-    expected_date;
-    notes;
-    created_at;
-    updated_at;
 };
 exports.FundSource = FundSource;
 __decorate([

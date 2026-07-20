@@ -13,13 +13,6 @@ exports.MaterialReceipt = void 0;
 const typeorm_1 = require("typeorm");
 const purchase_order_entity_1 = require("./purchase-order.entity");
 let MaterialReceipt = class MaterialReceipt {
-    id;
-    purchase_order_id;
-    receipt_date;
-    status;
-    notes;
-    created_at;
-    purchase_order;
 };
 exports.MaterialReceipt = MaterialReceipt;
 __decorate([

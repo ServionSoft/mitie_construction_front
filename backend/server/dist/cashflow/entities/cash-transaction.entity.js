@@ -12,19 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CashTransaction = void 0;
 const typeorm_1 = require("typeorm");
 let CashTransaction = class CashTransaction {
-    id;
-    transaction_date;
-    type;
-    amount;
-    method;
-    reference_no;
-    description;
-    project_id;
-    project_stage_id;
-    related_entity_type;
-    related_entity_id;
-    created_at;
-    updated_at;
 };
 exports.CashTransaction = CashTransaction;
 __decorate([
