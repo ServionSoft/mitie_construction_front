@@ -50,7 +50,7 @@ This file tracks the development progress of the Construction ERP (frontend + ba
 ### Phase 0 – Environment & Skeleton
 - [x] Backend project initialized (Express + TypeScript)
 - [ ] MySQL database created (`construction_erp`) and connection tested
-- [x] Database schema SQL file prepared (`db/schema.sql`)
+- [x] Database schema SQL file prepared (`backend/db/schema.sql`)
 - [ ] Health check endpoint (`/api/health`)
 - [ ] Frontend React app initialized
 - [ ] Basic routing + layout (desktop & mobile friendly)

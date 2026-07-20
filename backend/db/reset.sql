@@ -3,10 +3,10 @@
 -- WARNING: This will DELETE all data. Only run on fresh/dev setups.
 --
 -- Usage in MySQL shell:
---   mysql -u root construction_erp < d:/mitieconstructios/db/reset.sql
+--   mysql -u root -p construction_erp < backend/db/reset.sql
 -- OR in MySQL shell:
 --   USE construction_erp;
---   SOURCE d:/mitieconstructios/db/reset.sql;
+--   SOURCE backend/db/reset.sql;
 
 USE construction_erp;
 

@@ -1,6 +1,6 @@
 -- Seed initial Admin role and admin user for Construction ERP
--- Run: mysql -u root construction_erp < db/seed.sql
--- Or in MySQL: USE construction_erp; SOURCE d:/mitieconstructios/db/seed.sql;
+-- Run: mysql -u root -p construction_erp < backend/db/seed.sql
+-- Or in MySQL: USE construction_erp; SOURCE backend/db/seed.sql;
 
 USE construction_erp;
 
