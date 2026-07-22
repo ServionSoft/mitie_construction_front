@@ -28,7 +28,7 @@ Land Purchase → Construction Stages → Supplier & Labour Payments → Cashflo
 | **Database** | PostgreSQL |
 | **Deployment** | Render (`render.yaml`) |
 
-> Note: `backend/src` still contains an older Express + MySQL sketch, and `backend/db/*.sql` is MySQL-oriented. The running API used locally and on Render is **NestJS** under `backend/server` with **PostgreSQL**.
+> Note: `backend/src` still contains an older Express + MySQL sketch, and most `backend/db/*.sql` files are MySQL-oriented. Use [`backend/db/seed-mock-projects.pg.sql`](backend/db/seed-mock-projects.pg.sql) for Postgres mock projects. The running API is **NestJS** under `backend/server` with **PostgreSQL**.
 
 ---
 
@@ -50,8 +50,9 @@ mitie_construction_front/
 │   ├── src/                  # Legacy Express entry (optional)
 │   ├── db/                   # Reference SQL / seed scripts
 │   └── package.json          # Proxies npm scripts to backend/server
-├── development-plan.md
-├── scope.md
+├── docs/                     # PRD, architecture, API, database, tasks, …
+├── development-plan.md       # Historical checklist (root)
+├── scope.md                  # Detailed scope (root)
 ├── render.yaml
 └── README.md
 ```
@@ -72,6 +73,12 @@ mitie_construction_front/
 - Stage-wise budget and cost tracking
 - Location, plot size, and timeline
 
+### 2b. Land Registry
+
+- Plot number, owner, location, area
+- Purchase agreement and sale deed metadata (numbers, dates, file URLs)
+- Link parcels to projects; costs still recorded via Expenses (Land Purchase)
+
 ### 3. Construction Stages
 
 Example stages: Land Purchase, Design, Excavation, Foundation, Structure, Masonry, Plumbing, Electrical, Plaster, Flooring, Paint, Fixtures, External Works, Inspection, Ready for Sale
@@ -87,8 +94,15 @@ Per-stage: budget vs actual, labour/material/equipment/overhead, dates, completi
 
 ### 5. Procurement & Supplier Management
 
-- Suppliers, purchase orders, material receipts
-- Invoicing and payment tracking
+- Material requests (site engineer) → submit → approve/reject → convert to PO
+- Suppliers, purchase orders, goods receipts (receipt writes stock ledger)
+- Payment terms and PO status trail
+
+### 5b. Accounting
+
+- Chart of accounts, journal entries (Draft → Post)
+- Trial balance, general ledger, balance sheet (posted only)
+- Bank accounts, statement lines, reconciliation periods
 
 ### 6. Labour & Contractor Management
 
@@ -161,6 +175,16 @@ DB_NAME=construction_erp
 
 TypeORM is configured with `synchronize: true` in development/deploy config, so schema is created/updated from entities on startup. Do not rely on `npm run migrate` — that script is not defined.
 
+### Mock data (projects / stages / budgets)
+
+After the API has started once (so tables exist), load sample rows from [`backend/db/seed-mock-projects.pg.sql`](backend/db/seed-mock-projects.pg.sql) in pgAdmin Query Tool, or:
+
+```bash
+psql -h localhost -p 5432 -U postgres -d construction_erp -f backend/db/seed-mock-projects.pg.sql
+```
+
+Use your real `DB_PORT` if it is not `5432`. Project names are prefixed with `[MOCK]`. Re-running the file deletes previous `[MOCK]` rows then re-inserts. To wipe only: run the cleanup `DELETE` block at the top of that file.
+
 ### Backend setup
 
 ```bash
@@ -201,10 +225,9 @@ Vite serves the UI at **http://localhost:5173** and proxies `/api` to `http://lo
 
 - **Phase 6** — Material & Inventory Management: complete
 - **Phase 5** — Advanced features & reporting: complete
-- **Phase 4** — Accounting & base modules: in progress / next
-- **Phase 3** — Advanced analytics, forecasting & mobile polish: planned
+- **Phases 9–11** — Commercial greenfield: BOQ → Equipment → Documents (see docs)
 
-See `development-plan.md` for checklist detail.
+Next commercial modules: see [docs/Tasks.md](docs/Tasks.md) **P1–P5**. Narrative checklists: [docs/Phases.md](docs/Phases.md); historical: `development-plan.md`.
 
 ---
 
@@ -243,8 +266,20 @@ Set `DATABASE_URL` (and any JWT/secrets your environment requires) in the Render
 
 ## Additional Documentation
 
-- `scope.md` — scope and feature specifications
-- `development-plan.md` — roadmap and progress
+Index: [docs/README.md](docs/README.md). **Commercial build order:** [docs/Tasks.md](docs/Tasks.md) P1–P5.
+
+- [docs/PRD.md](docs/PRD.md) — product requirements
+- [docs/Architecture.md](docs/Architecture.md) — stack, folders, data/API flows
+- [docs/Database.md](docs/Database.md) — TypeORM entity / table reference
+- [docs/API.md](docs/API.md) — Nest endpoint inventory
+- [docs/Design.md](docs/Design.md) — UI/UX conventions
+- [docs/Rules.md](docs/Rules.md) — development standards
+- [docs/Phases.md](docs/Phases.md) — phased roadmap
+- [docs/Tasks.md](docs/Tasks.md) — actionable backlog + commercial priorities P1–P5
+- [docs/Decisions.md](docs/Decisions.md) — locked stack decisions
+- [docs/Memory.md](docs/Memory.md) — session diary (update after each session)
+- [scope.md](scope.md) — detailed scope and feature specifications (root)
+- [development-plan.md](development-plan.md) — historical checklist / progress (root)
 
 ---
 

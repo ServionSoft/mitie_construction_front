@@ -1,13 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity';
+import { AccountingService } from '../accounting/accounting.service';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectRepository(Expense)
     private readonly repo: Repository<Expense>,
+    private readonly dataSource: DataSource,
+    private readonly accounting: AccountingService,
   ) {}
 
   findAll(filters: { project_id?: string; project_stage_id?: string; category?: string }) {
@@ -18,14 +21,20 @@ export class ExpensesService {
     return query.getMany();
   }
 
-  create(dto: Partial<Expense>) {
+  async create(dto: Partial<Expense>) {
     const required = ['project_id', 'project_stage_id', 'category', 'vendor_type', 'payment_type', 'expense_date', 'amount'];
     for (const field of required) {
       if (!dto[field as keyof Expense]) {
         throw new BadRequestException(`Field '${field}' is required for every expense`);
       }
     }
-    return this.repo.save(this.repo.create(dto));
+    return this.dataSource.transaction(async (manager) => {
+      const expense = await manager.getRepository(Expense).save(
+        manager.getRepository(Expense).create(dto),
+      );
+      await this.accounting.postExpenseJournal(expense, manager);
+      return expense;
+    });
   }
 
   async update(id: string, dto: Partial<Expense>) {

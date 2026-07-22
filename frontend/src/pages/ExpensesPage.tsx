@@ -11,7 +11,7 @@ import Modal from '../components/Modal';
 import DetailDrawer, { DrawerSection, DrawerField } from '../components/DetailDrawer';
 import { exportCSV, exportPDF } from '../utils/exportUtils';
 
-const CATEGORIES = ['Materials', 'Labour', 'Equipment Rental', 'Transport', 'Utilities', 'Administration', 'Other'];
+const CATEGORIES = ['Land Purchase', 'Materials', 'Labour', 'Equipment Rental', 'Transport', 'Utilities', 'Administration', 'Other'];
 const PAYMENT_TYPES = ['Cash', 'Bank Transfer', 'Cheque', 'Credit'];
 
 const emptyForm = {
