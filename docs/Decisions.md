@@ -36,6 +36,16 @@ Leave historical root docs [`scope.md`](../scope.md) and [`development-plan.md`]
 | Express under `backend/src` as active API | **Rejected** | Keep for reference only; all new endpoints go in Nest |
 | Generic “tasks” table for project work | **Rejected** | Work breakdown is `project_stages` (+ budgets/progress) |
 
+## Product decisions
+
+| Decision | Choice | Why |
+|----------|--------|-----|
+| Capital entry module | **Funds first** (nav Capital → Funds) | Commit + receive capital before land/project spend; matches master business flow |
+| Fund commitment status | Derived from receipts; **Cancelled** manual | Committed / Partially_Received / Fully_Received auto; Cancel sticky until Reactivate |
+| Fund KPI Owner Capital | Sum of `EQUITY` commitments | Investor count = `INVESTOR` sources; Loan = sum `LOAN` committed |
+| Fund commitment amount UX | Min PKR **1,000**; commas + words (Lakh/Crore) | Client-side only; API still gets plain digits |
+| Funds quick-add bank | PK major banks combobox; opening balance **0** | Full bank setup (opening balance) remains under Accounting |
+
 ## Schema application note
 
 Today TypeORM runs with `synchronize: true` (entities create/alter tables on startup). Production hardening should gate or replace synchronize with explicit migrations — tracked in [Phases.md](Phases.md) / [Tasks.md](Tasks.md). Until then, **do not** assume Prisma migrate or hand-edited MySQL dumps are the live schema.

@@ -4,6 +4,19 @@ Actionable backlog and **commercial build order**. Narrative detail: [Phases.md]
 
 Agents must follow the **Commercial roadmap (P1–P5)** below for feature priority.
 
+## Product journey (Funds-first)
+
+Master operational order (see [PRD.md](PRD.md) Lifecycle):
+
+```text
+Funds → Land → Project → Strategy (Direct Sale | Development) → Sale → Profit
+```
+
+- [x] Funds as first Capital nav module; commitment status + fund dashboard KPIs
+- [x] Funds UX: commitment amount min 1,000 + commas/words; source-name + PK bank comboboxes; inline + New project / + New bank
+- [ ] Enforce fund allocation before land/project spend (later)
+- [ ] Project strategy: Direct Sale vs Development (later)
+
 ## Commercial roadmap (P1–P5)
 
 ```text
@@ -18,7 +31,7 @@ Foundation **shipped**. Deepen only — do not rebuild from scratch.
 - [x] Journal entries (balanced; Draft → Post)
 - [x] General ledger, trial balance, balance sheet
 - [x] Bank accounts, statement lines, reconciliation
-- [x] Auto-post operational events (expenses/sales) to journals — expense create, sale create, installment pay → Posted JE (`EXP-*` / `SALE-*` / `PMT-*`)
+- [x] Auto-post operational events (expenses/sales) to journals — expense create, sale create, installment pay → Posted JE (`EXP-*` / `SALE-*` / `PMT-*`); fund receipts → `FUND-*`
 - [x] JWT / RBAC on accounting mutating routes — Bearer + roles `Admin`, `Owner / Director`, `Accountant` on POST/PATCH
 
 ### P2 — Material Requests + approval workflow
@@ -85,6 +98,8 @@ Basic trail **shipped**. Deepen approvals next.
 
 ### Later / polish
 
+- [x] Pakistan location typeahead (Projects + Land) — `PakistanLocationInput`
+- [x] Project type radios (Residential / Commercial) + form placeholders
 - [ ] Forecasting / projected cashflow
 - [ ] Mobile UX polish
 

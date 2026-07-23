@@ -40,24 +40,24 @@ everything required for the construction-to-sale flow is handled inside one ERP 
 ## Lifecycle
 
 ```text
-Land Purchase
+Funds (commit + receive capital)
      ↓
-Project Planning
+Land / Property Acquisition
      ↓
-Construction Execution
+Project Creation
      ↓
-Material Procurement
-     ↓
-Labour Management
-     ↓
-Expense Tracking
-     ↓
-Cashflow Monitoring
-     ↓
-Property Sales
-     ↓
-Profit Calculation
+Choose Project Strategy
+     ├─ Direct Sale
+     └─ Development (Construction)
+            ↓
+       Construction Stages
+            ↓
+       Sale Anytime
+            ↓
+       Profit Calculation
 ```
+
+**Product journey:** Capital → Funds is the first operational module. Project funding should come from fund commitments and receipts.
 
 ## Target users (roles)
 
@@ -84,11 +84,14 @@ Profit Calculation
 ### Projects and stages
 
 - Create/manage projects (status, budget, location, plot size, dates)
+- `project_type` is **Residential** or **Commercial** (UI radios; default Residential)
+- Location entry via Pakistan city/area typeahead (`PakistanLocationInput`); free text still allowed
 - Construction stages with sequence, % complete, stage budgets
 
 ### Land registry
 
 - Parcel records: plot number, owner, location, area
+- Location uses the same Pakistan typeahead as projects
 - Purchase agreement and sale deed metadata (numbers, dates, file URLs)
 - Link to project; purchase **cost** still via Expenses (category Land Purchase)
 
@@ -116,8 +119,14 @@ Site Engineer → Material Request → Approval → Purchase Order
 
 ### Expenses and funds
 
-- Project/stage expenses by category
-- Fund sources and receipts
+- Project/stage expenses by category — **Direct** (cash/bank) or **Bill** (AP accrual) with later Pay
+- **Funds (first step):** commitments linked to partner banks; receipts auto-post to Cash & Bank
+- Commitment statuses: `Committed` → `Partially_Received` → `Fully_Received` (or `Cancelled`)
+- Fund dashboard KPIs: Total Committed / Received / Pending; Investor count; Loan amount; Owner capital (equity)
+- Commitment form UX: Source Name combobox; Total Committed min PKR 1,000 with comma formatting + amount in words; optional project link with inline create
+- Quick-add partner bank: major PK banks combobox (HBL, NBP, UBL, …) + Other; opening balance defaults to 0 (set under Accounting if needed)
+- Optional link of fund source to project for card rollups; project funding should originate from Funds
+- Project file: budget + target sale price; card shows spent / collected progress
 
 ### Sales
 

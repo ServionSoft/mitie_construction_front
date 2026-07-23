@@ -4,6 +4,7 @@ import type { LandParcel } from '../api/land';
 import { getProjects } from '../api/projects';
 import type { Project } from '../api/projects';
 import Modal from '../components/Modal';
+import PakistanLocationInput from '../components/PakistanLocationInput';
 
 const STATUSES = ['Owned', 'UnderTransfer', 'Disputed', 'SoldOnward'];
 
@@ -174,7 +175,12 @@ export default function LandPage() {
               </div>
               <div className="col-span-2">
                 <label className="block text-sm font-medium mb-1">Location *</label>
-                <input value={form.location ?? ''} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm" />
+                <PakistanLocationInput
+                  required
+                  value={form.location ?? ''}
+                  onChange={(location) => setForm((f) => ({ ...f, location }))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Area (text)</label>

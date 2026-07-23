@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Account } from './entities/account.entity';
 import { JournalEntry } from './entities/journal-entry.entity';
 import { JournalEntryLine } from './entities/journal-entry-line.entity';
@@ -17,6 +17,7 @@ const SEED_ACCOUNTS = [
   { code: '1500', name: 'Fixed Assets', type: 'ASSET' },
   { code: '2000', name: 'Accounts Payable', type: 'LIABILITY' },
   { code: '2100', name: 'Bank Loans', type: 'LIABILITY' },
+  { code: '2200', name: 'Customer Advances', type: 'LIABILITY' },
   { code: '3000', name: 'Owner Equity', type: 'EQUITY' },
   { code: '4000', name: 'Property Sales Revenue', type: 'INCOME' },
   { code: '4100', name: 'Other Income', type: 'INCOME' },
@@ -35,6 +36,7 @@ export class AccountingService implements OnModuleInit {
     @InjectRepository(BankAccount) private readonly bankRepo: Repository<BankAccount>,
     @InjectRepository(BankStatementLine) private readonly stmtRepo: Repository<BankStatementLine>,
     @InjectRepository(BankReconciliation) private readonly reconRepo: Repository<BankReconciliation>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async onModuleInit() {
@@ -133,6 +135,82 @@ export class AccountingService implements OnModuleInit {
     return this.findJournalEntry(id);
   }
 
+  /** Delete journal entry + lines by exact reference_no (e.g. EXP-12). No-op if missing. */
+  async deleteJournalByReference(reference_no: string, manager?: EntityManager) {
+    const jeRepo = manager ? manager.getRepository(JournalEntry) : this.jeRepo;
+    const jelRepo = manager ? manager.getRepository(JournalEntryLine) : this.jelRepo;
+    const stmtRepo = manager ? manager.getRepository(BankStatementLine) : this.stmtRepo;
+    const je = await jeRepo.findOne({ where: { reference_no } });
+    if (!je) return { deleted: false, reference_no };
+    await stmtRepo
+      .createQueryBuilder()
+      .update(BankStatementLine)
+      .set({ journal_entry_id: null })
+      .where('journal_entry_id = :id', { id: je.id })
+      .execute();
+    await jelRepo.delete({ journal_entry_id: je.id });
+    await jeRepo.delete(je.id);
+    return { deleted: true, reference_no, id: je.id };
+  }
+
+  async deleteJournalEntry(id: string) {
+    const je = await this.jeRepo.findOne({ where: { id } });
+    if (!je) throw new NotFoundException('Journal entry not found');
+    await this.stmtRepo
+      .createQueryBuilder()
+      .update(BankStatementLine)
+      .set({ journal_entry_id: null })
+      .where('journal_entry_id = :id', { id })
+      .execute();
+    await this.jelRepo.delete({ journal_entry_id: id });
+    await this.jeRepo.delete(id);
+    return { deleted: true };
+  }
+
+  /**
+   * Remove auto-posted JEs whose source row is already gone
+   * (EXP-*, SALE-*, PMT-*, FUND-*).
+   */
+  async purgeOrphanAutoJournals() {
+    const orphans: Array<{ id: string; reference_no: string }> = await this.dataSource.query(`
+      SELECT je.id::text AS id, je.reference_no
+      FROM journal_entries je
+      WHERE
+        (je.reference_no LIKE 'EXP-%'
+          AND NOT EXISTS (
+            SELECT 1 FROM expenses e
+            WHERE e.id::text = SUBSTRING(je.reference_no FROM 5)
+          ))
+        OR (je.reference_no LIKE 'SALE-%'
+          AND NOT EXISTS (
+            SELECT 1 FROM sales s
+            WHERE s.id::text = SUBSTRING(je.reference_no FROM 6)
+          ))
+        OR (je.reference_no LIKE 'PMT-%'
+          AND NOT EXISTS (
+            SELECT 1 FROM sale_installments si
+            WHERE si.id::text = SUBSTRING(je.reference_no FROM 5)
+          ))
+        OR (je.reference_no LIKE 'FUND-%'
+          AND NOT EXISTS (
+            SELECT 1 FROM fund_transactions ft
+            WHERE ft.id::text = SUBSTRING(je.reference_no FROM 6)
+          ))
+        OR (je.reference_no LIKE 'EXPPMT-%'
+          AND NOT EXISTS (
+            SELECT 1 FROM expense_payments ep
+            WHERE ep.id::text = SUBSTRING(je.reference_no FROM 8)
+          ))
+    `);
+
+    let deleted = 0;
+    for (const row of orphans) {
+      await this.deleteJournalEntry(row.id);
+      deleted += 1;
+    }
+    return { deleted, references: orphans.map((o) => o.reference_no) };
+  }
+
   async createAndPostEntry(
     dto: { entry: Partial<JournalEntry>; lines: Partial<JournalEntryLine>[] },
     manager?: EntityManager,
@@ -146,8 +224,11 @@ export class AccountingService implements OnModuleInit {
 
   async postExpenseJournal(expense: Expense, manager?: EntityManager) {
     const expenseAcc = await this.findAccountByCode(this.mapExpenseAccountCode(expense), manager);
-    const cashAcc = await this.findAccountByCode('1000', manager);
     const amount = Number(expense.amount).toFixed(2);
+    const isBill = expense.entry_mode === 'BILL' || expense.payment_type === 'Credit';
+    const creditAccountId = isBill
+      ? (await this.findAccountByCode('2000', manager)).id
+      : await this.resolveBankAssetAccountId(expense.bank_account_id, manager);
     return this.createAndPostEntry(
       {
         entry: {
@@ -158,7 +239,54 @@ export class AccountingService implements OnModuleInit {
         },
         lines: [
           { account_id: expenseAcc.id, dr_cr: 'DEBIT', amount, narration: expense.category },
-          { account_id: cashAcc.id, dr_cr: 'CREDIT', amount, narration: 'Cash payment' },
+          {
+            account_id: creditAccountId,
+            dr_cr: 'CREDIT',
+            amount,
+            narration: isBill
+              ? 'Accounts payable'
+              : expense.bank_account_id
+                ? 'Bank payment'
+                : 'Cash payment',
+          },
+        ],
+      },
+      manager,
+    );
+  }
+
+  async postExpenseBillPaymentJournal(
+    expense: Expense,
+    payment: {
+      id: string;
+      amount: string | number;
+      paid_date: string;
+      payment_method?: string;
+      bank_account_id?: string | null;
+    },
+    manager?: EntityManager,
+  ) {
+    const ap = await this.findAccountByCode('2000', manager);
+    const creditAccountId = await this.resolveBankAssetAccountId(payment.bank_account_id, manager);
+    const amount = Number(payment.amount).toFixed(2);
+    return this.createAndPostEntry(
+      {
+        entry: {
+          entry_date: payment.paid_date,
+          reference_no: `EXPPMT-${payment.id}`,
+          description: `Bill payment for expense ${expense.id}`,
+          project_id: expense.project_id,
+        },
+        lines: [
+          { account_id: ap.id, dr_cr: 'DEBIT', amount, narration: 'AP reduction' },
+          {
+            account_id: creditAccountId,
+            dr_cr: 'CREDIT',
+            amount,
+            narration: payment.bank_account_id
+              ? payment.payment_method || 'Bank payment'
+              : payment.payment_method || 'Cash payment',
+          },
         ],
       },
       manager,
@@ -206,6 +334,63 @@ export class AccountingService implements OnModuleInit {
         lines: [
           { account_id: cash.id, dr_cr: 'DEBIT', amount, narration: 'Cash received' },
           { account_id: ar.id, dr_cr: 'CREDIT', amount, narration: 'AR reduction' },
+        ],
+      },
+      manager,
+    );
+  }
+
+  /** Resolve Cash & Bank COA head for a partner bank (linked account_id or default 1000). */
+  async resolveBankAssetAccountId(bankAccountId: string | null | undefined, manager?: EntityManager) {
+    const cashDefault = await this.findAccountByCode('1000', manager);
+    if (!bankAccountId) return cashDefault.id;
+    const bankRepo = manager ? manager.getRepository(BankAccount) : this.bankRepo;
+    const bank = await bankRepo.findOne({ where: { id: bankAccountId } });
+    if (bank?.account_id) return bank.account_id;
+    return cashDefault.id;
+  }
+
+  mapFundCreditAccountCode(sourceType: string): string {
+    switch (sourceType) {
+      case 'LOAN':
+        return '2100';
+      case 'EQUITY':
+      case 'INVESTOR':
+        return '3000';
+      case 'ADVANCE_SALES':
+        return '2200';
+      default:
+        return '4100';
+    }
+  }
+
+  async postFundReceiptJournal(
+    meta: {
+      fund_transaction_id: string;
+      fund_source_id: string;
+      source_name: string;
+      source_type: string;
+      bank_account_id: string | null;
+      project_id: string | null;
+      transaction_date: string;
+      amount: string | number;
+    },
+    manager?: EntityManager,
+  ) {
+    const debitAccountId = await this.resolveBankAssetAccountId(meta.bank_account_id, manager);
+    const creditAcc = await this.findAccountByCode(this.mapFundCreditAccountCode(meta.source_type), manager);
+    const amount = Number(meta.amount).toFixed(2);
+    return this.createAndPostEntry(
+      {
+        entry: {
+          entry_date: meta.transaction_date,
+          reference_no: `FUND-${meta.fund_transaction_id}`,
+          description: `Fund receipt: ${meta.source_name}`,
+          project_id: meta.project_id || null,
+        },
+        lines: [
+          { account_id: debitAccountId, dr_cr: 'DEBIT', amount, narration: 'Cash & Bank' },
+          { account_id: creditAcc.id, dr_cr: 'CREDIT', amount, narration: meta.source_type },
         ],
       },
       manager,
@@ -315,8 +500,13 @@ export class AccountingService implements OnModuleInit {
     return this.bankRepo.find({ where: { is_active: true }, order: { name: 'ASC' } });
   }
 
-  createBankAccount(dto: Partial<BankAccount>) {
-    return this.bankRepo.save(this.bankRepo.create(dto));
+  async createBankAccount(dto: Partial<BankAccount>) {
+    let account_id = dto.account_id || null;
+    if (!account_id) {
+      const cash = await this.findAccountByCode('1000');
+      account_id = cash.id;
+    }
+    return this.bankRepo.save(this.bankRepo.create({ ...dto, account_id }));
   }
 
   async updateBankAccount(id: string, dto: Partial<BankAccount>) {

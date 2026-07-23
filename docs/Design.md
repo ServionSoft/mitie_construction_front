@@ -54,7 +54,17 @@ Do not introduce purple gradient themes or decorative glow aesthetics for this p
 - `components/Modal.tsx` — dialogs
 - `components/StatCard.tsx` — dashboard metrics
 - `components/DetailDrawer.tsx` — side detail where used
+- `components/PakistanLocationInput.tsx` — Pakistan city/area typeahead for location fields
 - Shared status color maps per page (Draft / Approved / Posted, etc.)
+
+## Forms / Location
+
+- For Pakistan address-style fields (projects, land parcels), use `PakistanLocationInput`.
+- Data: static list in `frontend/src/data/pakistanLocations.ts` (no Maps API).
+- Users may type free text or pick a suggestion; store a single `location` string.
+- Do not introduce Google Places / Mapbox unless product explicitly requires geocoding.
+- Project **type** on Projects forms: two radios — **Residential** (default) or **Commercial**; not free text.
+- Prefer short `placeholder` hints on text/number inputs (name, plot size, budget, etc.).
 
 ## Interaction
 

@@ -4,6 +4,15 @@ Diary for agents and developers. Update this file at the end of every developmen
 
 ## Completed
 
+- Funds UX polish: Total Committed min PKR 1,000 + comma display + amount-in-words (`utils/money.ts`); Source Name combobox; Add Bank PK bank list (`pakistanBanks` / `PakistanBankNameInput`); + New project on commitment form; opening balance omitted on Funds quick-add bank (defaults 0)
+- Funds-as-first-module: Capital nav; commitment status (Committed / Partial / Fully / Cancelled); KPIs (Pending, Investors, Loan, Owner Capital); Guide + PRD lifecycle updated
+- Expenses: Direct vs Bill; Pay from partner bank (Bank Transfer/Cheque); bill pay → `EXPPMT-*`; delete cleans EXP/EXPPMT journals
+- Deleting expense / fund receipt / sale now removes matching auto JE (`EXP-*` / `FUND-*` / `SALE-*`+`PMT-*`); Accounting has Delete + Clean orphan JEs
+- Projects: `target_sale_price`; list cards show budget used + sale collections (+ fund receipts when linked); quick +Expense / +Collection / +Payment on cards
+- Fund receipts auto-post JE (`FUND-*`) to bank COA / Cash & Bank; banks default-link to `1000`; COA seed `2200` Customer Advances
+- Funds: inject sources by partner bank (`bank_account_id` → `bank_accounts`) instead of project; UI bank selector on Funds page
+- Projects form: project type radios (Residential default / Commercial) + input placeholders
+- Pakistan location typeahead: `pakistanLocations.ts` + `PakistanLocationInput`; wired on Projects create/edit and Land parcels
 - P1 deepen: auto-post journals on expense create / sale create / installment pay (`EXP-*`, `SALE-*`, `PMT-*`); transactional with ops rows
 - P1 deepen: JWT + RolesGuard on accounting POST/PATCH (`Admin`, `Owner / Director`, `Accountant`); `JWT_SECRET` env with local fallback
 - Encoded commercial priorities P1–P5 into docs (Tasks source of truth; Phases 9–11; PRD/Rules/Memory/scope/README pointers)
@@ -40,7 +49,7 @@ Parallel (do not block P3+):
 
 ## Last update
 
-22 July 2026
+23 July 2026
 
 ## Session ritual
 

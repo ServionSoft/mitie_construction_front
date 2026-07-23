@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AccountingService } from './accounting.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -38,11 +38,25 @@ export class AccountingController {
     return this.svc.createJournalEntry(dto);
   }
 
+  @Post('journal/purge-orphans')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(...WRITE_ROLES)
+  purgeOrphanAutoJournals() {
+    return this.svc.purgeOrphanAutoJournals();
+  }
+
   @Post('journal/:id/post')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(...WRITE_ROLES)
   postJournalEntry(@Param('id') id: string) {
     return this.svc.postJournalEntry(id);
+  }
+
+  @Delete('journal/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(...WRITE_ROLES)
+  deleteJournalEntry(@Param('id') id: string) {
+    return this.svc.deleteJournalEntry(id);
   }
 
   @Get('reports/trial-balance') getTrialBalance(

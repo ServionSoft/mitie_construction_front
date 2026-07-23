@@ -36,10 +36,16 @@ const NAV_SECTIONS = [
     ]
   },
   {
+    label: 'Capital',
+    items: [
+      { id: 'funds', label: '💼 Funds' },
+    ]
+  },
+  {
     label: 'Projects',
     items: [
-      { id: 'projects', label: '🏗️ Projects' },
       { id: 'land', label: '📜 Land Registry' },
+      { id: 'projects', label: '🏗️ Projects' },
       { id: 'expenses', label: '💸 Expenses' },
       { id: 'labour', label: '👷 Labour' },
       { id: 'procurement', label: '📋 Procurement' },
@@ -50,7 +56,6 @@ const NAV_SECTIONS = [
     label: 'Business',
     items: [
       { id: 'suppliers', label: '🏢 Suppliers' },
-      { id: 'funds', label: '💼 Funds' },
       { id: 'sales', label: '🏠 Sales' },
     ]
   },

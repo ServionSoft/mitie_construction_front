@@ -6,6 +6,8 @@ import {
   getJournalEntry,
   createJournalEntry,
   postJournalEntry,
+  deleteJournalEntry,
+  purgeOrphanJournals,
   getTrialBalance,
   getGeneralLedger,
   getBalanceSheet,
@@ -218,7 +220,24 @@ export default function AccountingPage() {
         </div>
         <div className="flex gap-2">
           {tab === 'journal' && (
-            <button onClick={() => { setError(''); setShowModal(true); }} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">+ Journal Entry</button>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  if (!confirm('Remove auto-posted journals whose expense/sale/payment/fund row was already deleted?')) return;
+                  try {
+                    const result = await purgeOrphanJournals();
+                    alert(result.deleted ? `Removed ${result.deleted} orphan journal(s).` : 'No orphan journals found.');
+                    await load();
+                  } catch (e: unknown) {
+                    setError(e instanceof Error ? e.message : 'Purge failed');
+                  }
+                }}
+                className="border border-amber-500 text-amber-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-amber-50"
+              >
+                Clean orphan JEs
+              </button>
+              <button onClick={() => { setError(''); setShowModal(true); }} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">+ Journal Entry</button>
+            </div>
           )}
           {tab === 'accounts' && (
             <button onClick={() => { setError(''); setShowAccountModal(true); }} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">+ Account</button>
@@ -252,20 +271,41 @@ export default function AccountingPage() {
               <tr>
                 <th className="px-4 py-3 text-left text-gray-600">#</th>
                 <th className="px-4 py-3 text-left text-gray-600">Date</th>
+                <th className="px-4 py-3 text-left text-gray-600">Ref</th>
                 <th className="px-4 py-3 text-left text-gray-600">Description</th>
                 <th className="px-4 py-3 text-left text-gray-600">Status</th>
+                <th className="px-4 py-3 text-center text-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody>
               {entries.length === 0 ? (
-                <tr><td colSpan={4} className="text-center text-gray-400 py-8">No journal entries yet.</td></tr>
+                <tr><td colSpan={6} className="text-center text-gray-400 py-8">No journal entries yet.</td></tr>
               ) : entries.map((e) => (
-                <tr key={e.id} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => viewEntry(e.id)}>
-                  <td className="px-4 py-3 font-medium">JE-{e.id}</td>
-                  <td className="px-4 py-3">{e.entry_date}</td>
-                  <td className="px-4 py-3 text-gray-600">{e.description ?? '-'}</td>
+                <tr key={e.id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium cursor-pointer" onClick={() => viewEntry(e.id)}>JE-{e.id}</td>
+                  <td className="px-4 py-3 cursor-pointer" onClick={() => viewEntry(e.id)}>{e.entry_date}</td>
+                  <td className="px-4 py-3 text-xs font-mono text-gray-500 cursor-pointer" onClick={() => viewEntry(e.id)}>{e.reference_no ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-600 cursor-pointer" onClick={() => viewEntry(e.id)}>{e.description ?? '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${e.status === 'Posted' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{e.status}</span>
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      className="text-xs text-red-600 hover:underline"
+                      onClick={async (ev) => {
+                        ev.stopPropagation();
+                        if (!confirm(`Delete journal JE-${e.id}${e.reference_no ? ` (${e.reference_no})` : ''}?`)) return;
+                        try {
+                          await deleteJournalEntry(e.id);
+                          await load();
+                        } catch (err: unknown) {
+                          setError(err instanceof Error ? err.message : 'Delete failed');
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

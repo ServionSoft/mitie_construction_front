@@ -150,6 +150,24 @@ export async function postJournalEntry(id: string): Promise<JournalEntry> {
   return data;
 }
 
+export async function deleteJournalEntry(id: string): Promise<void> {
+  const res = await fetch(`${BASE}/journal/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || 'Failed to delete journal entry');
+  }
+}
+
+export async function purgeOrphanJournals(): Promise<{ deleted: number; references: string[] }> {
+  const res = await fetch(`${BASE}/journal/purge-orphans`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to purge orphan journals');
+  return data;
+}
+
 export async function getTrialBalance(from?: string, to?: string): Promise<TrialBalanceRow[]> {
   const params = new URLSearchParams();
   if (from) params.set('from', from);

@@ -144,12 +144,15 @@ Declare static `receipts` route before `:id` (already ordered in controller).
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/expenses` | List; query `project_id`, `project_stage_id`, `category` |
-| POST | `/api/expenses` | Create (**also** posts JE `EXP-{id}`: Dr expense COA / Cr 1000 Cash) |
-| PATCH | `/api/expenses/:id` | Update |
-| DELETE | `/api/expenses/:id` | Delete |
+| GET | `/api/expenses` | List; query `project_id`, `project_stage_id`, `category`, `status`, `entry_mode` |
 | GET | `/api/expenses/summary` | Summary; query `project_id` |
+| GET | `/api/expenses/:id/payments` | Bill payment history |
+| POST | `/api/expenses` | Create (`DIRECT` or `BILL`); JE `EXP-*` |
+| POST | `/api/expenses/:id/pay` | Pay accrual bill (partial OK); JE `EXPPMT-*` |
+| PATCH | `/api/expenses/:id` | Update |
+| DELETE | `/api/expenses/:id` | Delete + remove `EXP-*` / `EXPPMT-*` journals |
 
+**Direct:** Dr expense / Cr Cash or selected partner bank COA. **Bill:** Dr expense / Cr AP (`2000`); later pay clears AP from selected bank.  
 Expense COA map: LABOUR→5100; SUPPLIER/material→5200; overhead/land/admin→5300; else→5000.
 
 ---
@@ -158,13 +161,15 @@ Expense COA map: LABOUR→5100; SUPPLIER/material→5200; overhead/land/admin→
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/funds/sources` | List; query `project_id` |
+| GET | `/api/funds/sources` | List; query `bank_account_id`, `project_id`, `status` (joins bank name) |
 | GET | `/api/funds/sources/:id` | Get source |
-| POST | `/api/funds/sources` | Create source |
-| PATCH/DELETE | `/api/funds/sources/:id` | Update / delete |
+| POST | `/api/funds/sources` | Create commitment (`bank_account_id` required; status defaults Committed) |
+| PATCH/DELETE | `/api/funds/sources/:id` | Update (incl. Cancelled / Reactivate) / delete |
 | GET | `/api/funds/transactions` | List; query `fund_source_id` |
-| POST | `/api/funds/transactions` | Create |
-| PATCH/DELETE | `/api/funds/transactions/:id` | Update / delete |
+| POST | `/api/funds/transactions` | Create receipt + auto-post JE `FUND-*`; recomputes source status |
+| PATCH/DELETE | `/api/funds/transactions/:id` | Update / delete (+ status recompute) |
+
+Status rules: `Committed` (received≈0), `Partially_Received`, `Fully_Received` (received≥committed); `Cancelled` is manual and sticky until reactivated.
 
 ---
 
@@ -213,6 +218,8 @@ Static paths `summary` / `dashboard` should be registered before `:id` — verif
 | GET | `/api/accounting/journal/:id` | One JE + lines |
 | POST | `/api/accounting/journal` | Create draft (balanced lines) |
 | POST | `/api/accounting/journal/:id/post` | Draft → Posted |
+| DELETE | `/api/accounting/journal/:id` | Delete JE + lines |
+| POST | `/api/accounting/journal/purge-orphans` | Remove auto JEs whose source row is gone |
 | GET | `/api/accounting/reports/trial-balance` | Query `from`, `to` |
 | GET | `/api/accounting/reports/general-ledger` | Query `account_id`, `from`, `to` |
 | GET | `/api/accounting/reports/balance-sheet` | Query `as_of` |
@@ -224,7 +231,7 @@ Static paths `summary` / `dashboard` should be registered before `:id` — verif
 | POST | `/api/accounting/reconciliations` | Open period |
 | POST | `/api/accounting/reconciliations/:id/complete` | Complete recon |
 
-Operational auto-journals (from expenses/sales) also appear here as Posted entries with refs `EXP-*`, `SALE-*`, `PMT-*`.
+Operational auto-journals (expenses/sales/funds) use refs `EXP-*`, `SALE-*`, `PMT-*`, `FUND-*`. Deleting the source row now deletes the matching JE(s).
 
 ---
 

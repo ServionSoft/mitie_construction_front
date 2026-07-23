@@ -91,7 +91,8 @@ Composite PK: `role_id` + `permission_id` → `roles`, `permissions`.
 | `name` | varchar(150) | |
 | `location`, `plot_size`, `project_type` | varchar nullable | |
 | `start_date`, `expected_completion_date` | date nullable | |
-| `total_estimated_budget` | decimal(18,2) nullable | |
+| `total_estimated_budget` | decimal(18,2) nullable | Cost budget |
+| `target_sale_price` | decimal(18,2) nullable | Target sale / exit price |
 | `status` | varchar(50) default `Planning` | string, not DB enum |
 | `created_at`, `updated_at` | timestamp | |
 
@@ -212,7 +213,11 @@ Append-only movements. `movement_type` varchar (app uses `RECEIPT`, `ISSUE`, `TR
 
 ### `expenses`
 
-Required `project_id`, `project_stage_id`, `category`, `payment_type`, `expense_date`, `amount`. **enum** `vendor_type`: `SUPPLIER`, `LABOUR`, `OTHER` with optional `supplier_id` / `contractor_id`. Optional `cash_transaction_id`. Land purchase uses expense category (costs not duplicated on parcels).
+Required `project_id`, `project_stage_id`, `category`, `payment_type`, `expense_date`, `amount`. **enum** `vendor_type`: `SUPPLIER`, `LABOUR`, `OTHER` with optional `supplier_id` / `contractor_id`. **enum** `entry_mode`: `DIRECT` (pay now) | `BILL` (accrual). Optional `bank_account_id` → `bank_accounts` (required for Bank Transfer / Cheque). `paid_amount`, `status` (`Paid` / `Unpaid` / `Partial`). Optional `cash_transaction_id`. Land purchase uses expense category (costs not duplicated on parcels).
+
+### `expense_payments`
+
+Bill settlements: FK `expense_id`; `paid_date`, `amount`, `payment_method`, optional `bank_account_id`, `notes`. Auto JE `EXPPMT-{id}`: Dr AP / Cr bank or Cash.
 
 ---
 
@@ -220,11 +225,11 @@ Required `project_id`, `project_stage_id`, `category`, `payment_type`, `expense_
 
 ### `fund_sources`
 
-`project_id`, `source_name`; **enum** `source_type`: `EQUITY`, `LOAN`, `INVESTOR`, `ADVANCE_SALES`, `OTHER`; `total_committed`, `received_so_far`, `expected_date`, `notes`.
+Primary link: required `bank_account_id` → `bank_accounts` (partner bank; banks default-link to COA `1000` Cash & Bank). Optional `project_id` → `projects` (for project-card rollups). `source_name`; **enum** `source_type`: `EQUITY`, `LOAN`, `INVESTOR`, `ADVANCE_SALES`, `OTHER`; `total_committed`, `received_so_far`; **status** varchar: `Committed` | `Partially_Received` | `Fully_Received` | `Cancelled` (derived from receipts except Cancelled, which is manual); `expected_date`, `notes`.
 
 ### `fund_transactions`
 
-FK `fund_source_id`; `transaction_date`, `amount`; optional `cash_transaction_id`.
+FK `fund_source_id`; `transaction_date`, `amount`; optional `cash_transaction_id`. Creating a receipt auto-posts JE `FUND-*`: Dr bank COA (or `1000`) / Cr by type (`2100` loan, `3000` equity/investor, `2200` advances, `4100` other).
 
 ### `cash_transactions`
 

@@ -148,8 +148,19 @@ export class SalesService {
   }
 
   async deleteSale(id: string) {
-    await this.installRepo.delete({ sale_id: id });
-    await this.saleRepo.delete(id);
-    return { deleted: true };
+    return this.dataSource.transaction(async (manager) => {
+      const saleRepo = manager.getRepository(Sale);
+      const installRepo = manager.getRepository(SaleInstallment);
+      const sale = await saleRepo.findOne({ where: { id } });
+      if (!sale) throw new NotFoundException('Sale not found');
+      const installments = await installRepo.find({ where: { sale_id: id } });
+      for (const inst of installments) {
+        await this.accounting.deleteJournalByReference(`PMT-${inst.id}`, manager);
+      }
+      await this.accounting.deleteJournalByReference(`SALE-${id}`, manager);
+      await installRepo.delete({ sale_id: id });
+      await saleRepo.delete(id);
+      return { deleted: true };
+    });
   }
 }

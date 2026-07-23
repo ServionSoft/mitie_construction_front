@@ -35,6 +35,8 @@ Checklist-style roadmap for agents and humans. Detail checklists also live in [d
 
 - [x] Property units, customers, sales, installments
 - [x] Fund sources and transactions
+- [x] Funds-first product entry: Capital nav, commitment status, fund dashboard KPIs ([Tasks.md](Tasks.md) Product journey)
+- [x] Funds form UX: min commitment 1,000 + money words; PK bank / source-name comboboxes; inline new project/bank
 - [x] Cash transactions and summaries
 
 ## Phase 4 — Accounting foundation
